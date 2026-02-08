@@ -1,0 +1,13 @@
+# Virtual environment
+chatbotenv/
+genai_env/
+
+# Environment variables
+.env
+
+# Database
+chatbot.db
+
+# Python cache
+__pycache__/
+*.pyc

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI ChatBOT</title>
+<style>
+/* --- Basic Reset --- */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+/* --- Body & Layout --- */
+body { display:flex; height:100vh; background: linear-gradient(120deg,#f0f2f5,#d0e6f7); }
+
+/* --- Sidebar --- */
+.sidebar {
+    width:280px; background:#1c1f2a; color:#fff; display:flex; flex-direction:column; box-shadow:3px 0 10px rgba(0,0,0,0.2);
+}
+.new-chat { padding:20px; background:#2b2f42; text-align:center; font-weight:bold; font-size:18px; border-bottom:1px solid #333; }
+.new-chat a { color:#fff; text-decoration:none; transition:0.3s; }
+.new-chat a:hover { color:#00c6ff; }
+.chat-history { flex:1; overflow-y:auto; }
+.chat-item { display:block; padding:15px 20px; border-bottom:1px solid #2a2e3f; color:#ccc; text-decoration:none; transition:0.2s; }
+.chat-item:hover { background:#33384f; color:#fff; }
+
+/* --- Chat Area --- */
+.chat-container { flex:1; display:flex; flex-direction:column; position:relative; }
+.messages { flex:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+
+/* --- Messages --- */
+.message { max-width:70%; padding:14px 18px; border-radius:15px; line-height:1.5; font-size:15px; word-wrap:break-word; box-shadow:0 2px 6px rgba(0,0,0,0.15); animation: slideUp 0.3s forwards; opacity:0; transform:translateY(20px); }
+.message.user { background:#00c6ff; color:#fff; align-self:flex-end; border-bottom-right-radius:0; }
+.message.ai { background:#fff; color:#333; align-self:flex-start; border-bottom-left-radius:0; }
+@keyframes slideUp { to { opacity:1; transform:translateY(0); } }
+
+/* --- Input Area --- */
+.input-area { padding:15px 20px; display:flex; background:#fff; border-top:1px solid #ddd; gap:10px; }
+.input-area input { flex:1; padding:12px 18px; border-radius:25px; border:1px solid #ccc; outline:none; font-size:15px; transition:0.2s; }
+.input-area input:focus { border-color:#00c6ff; box-shadow:0 0 10px rgba(0,198,255,0.3); }
+.input-area button { padding:12px 28px; border:none; border-radius:25px; background:#00c6ff; color:#fff; font-weight:bold; cursor:pointer; transition:0.3s; }
+.input-area button:hover { background:#00a1cc; transform: scale(1.05); }
+
+/* --- Scrollbars --- */
+.chat-history::-webkit-scrollbar, .messages::-webkit-scrollbar { width:8px; }
+.chat-history::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb { background:#888; border-radius:4px; }
+.chat-history::-webkit-scrollbar-thumb:hover, .messages::-webkit-scrollbar-thumb:hover { background:#555; }
+
+/* --- Responsive --- */
+@media(max-width:768px){
+    .sidebar{ width:60px; }
+    .new-chat{ padding:15px 5px; font-size:14px; }
+    .chat-item{ padding:10px 5px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="new-chat">
+        <a href="{{ url_for('new_chat') }}">+ New Chat</a>
+    </div>
+    <div class="chat-history">
+        {% for chat in chats %}
+            <a class="chat-item" href="{{ url_for('view_chat', chat_id=chat[0]) }}">{{ chat[1] }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Chat Area -->
+<div class="chat-container">
+    <div class="messages" id="messages">
+        {% for msg in chat_history %}
+            <div class="message {{ msg.sender }}">{{ msg.text }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="input-area">
+        <form method="POST" action="{{ url_for('send_message', chat_id=current_chat) }}">
+            <input type="text" name="message" placeholder="Type your message..."required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
